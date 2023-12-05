@@ -20,7 +20,7 @@ func AppRouter(app *fiber.App) {
 	app.Get("/_healthz", func(ctx *fiber.Ctx) error {
 		return ctx.JSON(resultVo.Success("success", ctx))
 	})
-	app.Post("/task/orderCheck", taskApi.OrderCheck)
+	app.Post("/task/testCheck", taskApi.TestCheck)
 	// 需要登录鉴权的路由
 	apiRoute := app.Group("", middleware.AuthMiddleware())
 	apiRoute.Get("/userInfo", func(ctx *fiber.Ctx) error {

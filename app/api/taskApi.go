@@ -15,7 +15,7 @@ type CheckQo struct {
 	ExecutorParams string
 }
 
-func OrderCheck(c *fiber.Ctx) error {
+func TestCheck(c *fiber.Ctx) error {
 	var a context.Context
 	var qo CheckQo
 	if err := c.BodyParser(&qo); err != nil {
