@@ -1,11 +1,11 @@
 package businessError
 
 type Err struct {
-	Code int `json:"code"`
-	Message string `json:"message"`
+	Code    int    `json:"code"`
+	Message string `json:"core"`
 }
 
-func New(code int, msg ...string) *Err  {
+func New(code int, msg ...string) *Err {
 	message := ""
 	if len(msg) <= 0 {
 		message = GetMsg(code)
@@ -18,9 +18,6 @@ func New(code int, msg ...string) *Err  {
 	}
 }
 
-func (b *Err) Error() string  {
+func (b *Err) Error() string {
 	return b.Message
 }
-
-
-

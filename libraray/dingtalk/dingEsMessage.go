@@ -66,5 +66,5 @@ func printResult(dt *dingtalk.DingTalk) {
 	if err != nil {
 		global.SLog.Infof("发送钉钉失败->printResult: %v", err)
 	}
-	global.SLog.Infof("发送消息成功->printResult, message: %s", reqData)
+	global.SLog.Infof("发送消息成功->printResult, core: %s", reqData)
 }

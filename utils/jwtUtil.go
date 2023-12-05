@@ -12,7 +12,7 @@ import (
 
 type CustomClaims struct {
 	UserId          string `json:"userId"`
-	PasswordVersion int8    `json:"passwordVersion"`
+	PasswordVersion int8   `json:"passwordVersion"`
 	jwt.StandardClaims
 }
 
@@ -22,14 +22,13 @@ func CreateToken(userId string, passwordVersion int8) string {
 		PasswordVersion: passwordVersion,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(config.TTL).Unix(),
-			Id: utils.UUID(),
+			Id:        utils.UUID(),
 		},
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, customClaims)
 	tokenString, err := token.SignedString([]byte(config.JWT_SECRET))
 	if err != nil {
-		global.BLog.Error("jwt token generate err", err)
 		panic(businessError.New(businessError.TOKEN_CREATE_ERROR))
 	}
 	global.SLog.Infof("user login success:  userId: %s token: %s", userId, tokenString)

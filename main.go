@@ -8,6 +8,7 @@ import (
 	"fiber/config"
 	businessError "fiber/error"
 	"fiber/global"
+	"fiber/libraray/core"
 	"fiber/libraray/database"
 	"fiber/libraray/elastic"
 	"fiber/libraray/grtm"
@@ -29,18 +30,22 @@ func main() {
 		panic("Error loading .env file")
 	}
 	// 启动配置
+	addr := fmt.Sprintf(":%s", config.Config("PORT"))
 	initConfig := fiber.Config{
-		ServerHeader: "GoApp",
-		ReduceMemoryUsage: true,
-		AppName:      config.Config("APP_NAME"),
+		ServerHeader:          "GoApp",
+		ReduceMemoryUsage:     true,
+		ColorScheme:           fiber.DefaultColors,
+		DisableStartupMessage: true,
+		EnablePrintRoutes:     false,
+		AppName:               config.Config("APP_NAME"),
 		// 业务异常返回
 		ErrorHandler: func(ctx *fiber.Ctx, e error) error {
 			if err, ok := e.(*businessError.Err); ok {
 				// 业务异常
-				return ctx.JSON(resultVo.Fail(err, ctx))
+				return ctx.JSON(resultVo.Fail(err, ctx), fiber.MIMEApplicationJSONCharsetUTF8)
 			} else {
 				// 系统异常
-				return ctx.JSON(resultVo.Fail(businessError.New(businessError.SERVER_ERROR), ctx))
+				return ctx.JSON(resultVo.Fail(businessError.New(businessError.SERVER_ERROR), ctx), fiber.MIMEApplicationJSONCharsetUTF8)
 			}
 		},
 	}
@@ -60,6 +65,8 @@ func main() {
 	router.AppRouter(app)
 	// 初始化线程池
 	grtm.InitCoPool()
+	// 启动消息
+	core.StartupMessage(addr)
 	// 启动服务
-	log.Fatal(app.Listen(fmt.Sprintf(":%s", config.Config("PORT"))))
+	log.Fatal(app.Listen(addr))
 }

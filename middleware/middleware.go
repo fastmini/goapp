@@ -24,6 +24,7 @@ func InitMiddleware(app *fiber.App) {
 	// 跨域中间件
 	app.Use(cors.New())
 	// 设置日志中间件
+	logger.Request(app)
 	app.Use(logger.New())
 	// 设置全局错误
 	app.Use(recover2.New(recover2.Config{

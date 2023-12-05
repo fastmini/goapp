@@ -21,7 +21,7 @@ type ResultVo struct {
 
 func Success(data interface{}, c *fiber.Ctx) ResultVo {
 	return ResultVo{
-		Err: businessError.New(businessError.SUCCESS),
+		Err:       businessError.New(businessError.SUCCESS),
 		TimeStamp: time.Now().Nanosecond(),
 		Data:      data,
 		RequestId: c.Locals(requestid.ConfigDefault.ContextKey),
@@ -30,11 +30,9 @@ func Success(data interface{}, c *fiber.Ctx) ResultVo {
 
 func Fail(error *businessError.Err, c *fiber.Ctx) ResultVo {
 	return ResultVo{
-		Err: error,
+		Err:       error,
 		TimeStamp: time.Now().Nanosecond(),
 		Data:      nil,
 		RequestId: c.Locals(requestid.ConfigDefault.ContextKey),
 	}
 }
-
-
