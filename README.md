@@ -27,3 +27,17 @@
 ```
 gentool -dsn "test:test@@tcp(127.0.0.1:3306)/test?charset=utf8mb4&parseTime=true&loc=Local" -tables "user,post" -onlyModel
 ```
+
+## 🤝 特别感谢
+
+1. [fiber](https://github.com/gofiber/fiber)
+
+## 🤝 链接
+
+[Go开发者成长线路图](http://www.golangroadmap.com/)
+
+## 🔑 License
+
+[MIT](https://github.com/fastmini/fastmini/blob/master/LICENSE.md)
+
+Copyright (c) 2023 Ali2vu
