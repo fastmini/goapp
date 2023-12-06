@@ -9,9 +9,9 @@ import (
 	"time"
 )
 
-func CTimeCost(start time.Time, dsId int) {
+func CTimeCost(start time.Time) {
 	tc := time.Since(start)
-	global.SLog.Infof("实例ID: %d 执行完成, 耗时：%v", dsId, tc)
+	global.BLog.Infof("执行完成, 耗时：%v", tc)
 }
 
 func CIn(target string, str_array []string) bool {
