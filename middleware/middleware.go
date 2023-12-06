@@ -6,7 +6,7 @@ package middleware
 import (
 	businessError "fiber/error"
 	"fiber/global"
-	"fiber/logger"
+	"fiber/libraray/logger"
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"

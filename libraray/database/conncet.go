@@ -6,7 +6,7 @@ package database
 import (
 	"fiber/config"
 	"fiber/global"
-	libLog "fiber/logger"
+	libLog "fiber/libraray/logger"
 	"fmt"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
