@@ -1,3 +1,6 @@
+// Package dingtalk
+// @Description:
+// @Author AN 2023-12-06 23:19:13
 package dingtalk
 
 import (

@@ -1,3 +1,6 @@
+// Package global
+// @Description:
+// @Author AN 2023-12-06 23:21:03
 package global
 
 import (
@@ -32,6 +35,6 @@ type AuthUserPayload struct {
 
 var AuthUser *AuthUserPayload
 
-//func SetAuthUser(user *model.UserModel) {
+// func SetAuthUser(user *model.UserModel) {
 //	AuthUser = &AuthUserPayload{UserId: user.Id}
-//}
+// }

@@ -1,8 +1,6 @@
-/**
- * @Author: AF
- * @Date: 2021/8/10 12:03
- */
-
+// Package logger
+// @Description:
+// @Author AN 2023-12-06 23:13:43
 package logger
 
 import (
@@ -32,7 +30,6 @@ func (m *MyWriter) Printf(format string, v ...interface{}) {
 	m.mlog.Info(logstr)
 }
 
-// Request 请求日志输出到文件
 func Request(app *fiber.App) {
 	app.Use(logger.New(logger.Config{
 		Format:        "INFO[${time}] ${status} ${locals:requestid} - ${latency} ${method} ${path}\n",

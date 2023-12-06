@@ -1,11 +1,14 @@
+// Package grtm
+// @Description:
+// @Author AN 2023-12-06 23:19:56
 package grtm
 
 func InitCoPool() {
 	// 默认连接池
-	//global.CoPool = defaultPool()
+	// global.CoPool = defaultPool()
 }
 
-//func defaultPool() *ants.PoolWithFunc {
+// func defaultPool() *ants.PoolWithFunc {
 //	//var wg sync.WaitGroup
 //	//wg.Add(1)
 //	////p, _ := ants.NewPoolWithFunc(1, func(i interface{}) {
@@ -17,4 +20,4 @@ func InitCoPool() {
 //	////	wg.Done()
 //	////})
 //	//return p
-//}
+// }

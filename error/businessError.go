@@ -1,3 +1,6 @@
+// Package businessError
+// @Description:
+// @Author AN 2023-12-06 23:21:08
 package businessError
 
 type Err struct {

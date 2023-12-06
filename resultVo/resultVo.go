@@ -1,8 +1,6 @@
-/**
- * @Author: AF
- * @Date: 2021/8/9 16:48
- */
-
+// Package resultVo
+// @Description:
+// @Author AN 2023-12-06 23:18:23
 package resultVo
 
 import (

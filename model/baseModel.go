@@ -1,8 +1,6 @@
-/**
- * @Author: AF
- * @Date: 2021/8/9 18:28
- */
-
+// Package model
+// @Description:
+// @Author AN 2023-12-06 23:18:33
 package model
 
 import (

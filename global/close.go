@@ -1,3 +1,6 @@
+// Package global
+// @Description:
+// @Author AN 2023-12-06 23:20:55
 package global
 
 import "fmt"

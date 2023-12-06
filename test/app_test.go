@@ -1,15 +1,12 @@
+// Package test
+// @Description:
+// @Author AN 2023-12-06 23:17:26
 package test
 
 import (
-	"fiber/test/enum"
 	"fmt"
 	"testing"
 )
-
-type CheckServiceEnum struct {
-	Service enum.State
-	Name    string
-}
 
 func TestApp(t *testing.T) {
 	a := 1
