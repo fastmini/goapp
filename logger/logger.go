@@ -98,7 +98,7 @@ func init() {
 	appLogger.SetLevel(log.TraceLevel)
 	appLogger.SetReportCaller(false)
 	appLogger.SetOutput(&lumberjack.Logger{
-		Filename:   "./log/app.log",
+		Filename:   "./log/api.log",
 		MaxSize:    500, // megabytes
 		MaxBackups: 1,
 		MaxAge:     30,   // days
@@ -128,7 +128,7 @@ func New() fiber.Handler {
 				FullTimestamp:   true,
 			})
 			appLogger.SetOutput(io.MultiWriter(os.Stdout, &lumberjack.Logger{
-				Filename:   "./log/app.log",
+				Filename:   "./log/api.log",
 				MaxSize:    500, // megabytes
 				MaxBackups: 1,
 				MaxAge:     30,   // days

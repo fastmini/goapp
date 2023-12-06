@@ -11,6 +11,8 @@ import (
 	"os"
 )
 
+const Version = "1.0.0"
+
 // Redis 默认redis连接池
 var Redis redis.Conn
 
