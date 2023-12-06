@@ -8,7 +8,7 @@ package database
 import (
 	"fiber/config"
 	"fiber/global"
-	appLog "fiber/logger"
+	libLog "fiber/logger"
 	"fmt"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -30,9 +30,9 @@ func ConnectDB() {
 		"10s",
 	)
 	global.DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
-		SkipDefaultTransaction: true, //关闭默认事务
+		SkipDefaultTransaction: true, // 关闭默认事务
 		PrepareStmt:            true, // 开启缓存预编译，可以提高后续的调用速度
-		Logger: logger.New(appLog.Logg(), logger.Config{
+		Logger: logger.New(libLog.SqlLogg(), logger.Config{
 			SlowThreshold:             2 * time.Second,
 			Colorful:                  false,
 			IgnoreRecordNotFoundError: true,
@@ -40,9 +40,9 @@ func ConnectDB() {
 		}),
 	})
 	if err != nil {
-		global.SLog.Infof("连接DB数据源失败, 地址: %v, 账号：%v ERR: %v", config.Config("DB_HOST"), config.Config("DB_USER"), err)
+		global.SLog.Errorf("连接DB数据源失败, 地址: %v, 账号：%v ERR: %v", config.Config("DB_HOST"), config.Config("DB_USER"), err)
 	}
-	//一个坑，不设置这个参数，gorm会把表名转义后加个s，导致找不到数据库的表
+	// 一个坑，不设置这个参数，gorm会把表名转义后加个s，导致找不到数据库的表
 	SqlDB, _ := global.DB.DB()
 	// 设置连接池中最大的闲置连接数
 	SqlDB.SetMaxIdleConns(3)

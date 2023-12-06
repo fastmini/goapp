@@ -20,7 +20,7 @@ import (
 func AppRouter(app *fiber.App) {
 	app.Get("/metrics", monitor.New(monitor.Config{Title: "GoApp Monitor", Refresh: 2 * time.Second}))
 	app.Get("/_startup", func(ctx *fiber.Ctx) error {
-		global.SLog.Infof("hello")
+		global.BLog.Infof("hello")
 		return ctx.JSON(resultVo.Success("ok", ctx), fiber.MIMEApplicationJSONCharsetUTF8)
 	})
 	app.Get("/_healthz", func(ctx *fiber.Ctx) error {

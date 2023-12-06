@@ -12,18 +12,15 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/requestid"
-	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
 	log "github.com/sirupsen/logrus"
+	"gopkg.in/natefinch/lumberjack.v2"
 	"io"
 	"os"
-	"path"
-	"time"
 )
 
 var requestWriter io.Writer
-var sqlWriter io.Writer
-var appWriter io.Writer
-var appLogrus *log.Logger
+var sqlLogger *log.Logger
+var appLogger *log.Logger
 
 type MyWriter struct {
 	mlog *log.Logger
@@ -31,101 +28,85 @@ type MyWriter struct {
 
 func (m *MyWriter) Printf(format string, v ...interface{}) {
 	logstr := fmt.Sprintf(format, v...)
-	//利用loggus记录日志
+	// 利用loggus记录日志
 	m.mlog.Info(logstr)
 }
 
 // Request 请求日志输出到文件
 func Request(app *fiber.App) {
 	app.Use(logger.New(logger.Config{
-		Format:     "[${time}] ${status} ${locals:requestid} - ${latency} ${method} ${path}\n",
-		TimeFormat: "2006-01-02 15:04:05",
-		TimeZone:   "Asia/Shanghai",
-		Output:     requestWriter,
+		Format:        "INFO[${time}] ${status} ${locals:requestid} - ${latency} ${method} ${path}\n",
+		TimeFormat:    "2006-01-02 15:04:05",
+		TimeZone:      "Asia/Shanghai",
+		DisableColors: false,
+		Output: &lumberjack.Logger{
+			Filename:   "./log/server.log",
+			MaxSize:    500, // megabytes
+			MaxBackups: 1,
+			MaxAge:     30,   // days
+			Compress:   true, // disabled by default
+		},
 	}))
 }
 
-func Logg() *MyWriter {
-	logg := log.New()
+func SqlLogg() *MyWriter {
 	if isProd() {
-		appLogrus.SetFormatter(&log.JSONFormatter{
+		sqlLogger.SetFormatter(&log.JSONFormatter{
 			TimestampFormat: "2006-01-02 15:04:05",
 			PrettyPrint:     false,
 		})
-		appLogrus.SetOutput(appWriter)
+		sqlLogger.SetOutput(&lumberjack.Logger{
+			Filename:   "./log/sql.log",
+			MaxSize:    500, // megabytes
+			MaxBackups: 1,
+			MaxAge:     30,   // days
+			Compress:   true, // disabled by default
+		})
 	} else {
-		logg.SetFormatter(&log.TextFormatter{
+		sqlLogger.SetFormatter(&log.TextFormatter{
 			TimestampFormat: "2006-01-02 15:04:05",
 			ForceColors:     true,
 			FullTimestamp:   true,
 		})
 	}
-	logg.SetLevel(log.TraceLevel)
-	logg.SetReportCaller(false)
-	logg.SetOutput(sqlWriter)
-	return &MyWriter{mlog: logg}
+	return &MyWriter{mlog: sqlLogger}
 }
 
 func init() {
-	// 初始化Request日志文件
-	reqLogFilePath := "log/"
-	reqLogFileName := "server.log"
-	reqFileName := path.Join(reqLogFilePath, reqLogFileName)
-	reqWriter, _ := rotatelogs.New(
-		reqLogFilePath+"server_%Y%m%d.log",
-		rotatelogs.WithLinkName(reqFileName),
-		rotatelogs.WithMaxAge(7*24*time.Hour),
-		rotatelogs.WithRotationTime(24*time.Hour),
-	)
-	requestWriter = reqWriter
 }
 
 func init() {
 	// 初始化SQL日志文件
-	reqLogFilePath := "log/"
-	reqLogFileName := "sql.log"
-	reqFileName := path.Join(reqLogFilePath, reqLogFileName)
-	reqWriter, _ := rotatelogs.New(
-		reqLogFilePath+"sql_%Y%m%d.log",
-		rotatelogs.WithLinkName(reqFileName),
-		rotatelogs.WithMaxAge(7*24*time.Hour),
-		rotatelogs.WithRotationTime(24*time.Hour),
-	)
-	sqlWriter = reqWriter
+	sqlLogger = log.New()
+	sqlLogger.SetLevel(log.TraceLevel)
+	sqlLogger.SetReportCaller(false)
 }
 
 func init() {
 	// 初始化SLog日志
-	logrus := log.New()
-	logrus.SetLevel(log.TraceLevel)
-	logrus.SetReportCaller(false)
-	logrus.SetFormatter(&log.TextFormatter{
+	global.SLog = log.New()
+	global.SLog.SetLevel(log.TraceLevel)
+	global.SLog.SetReportCaller(false)
+	global.SLog.SetFormatter(&log.TextFormatter{
 		TimestampFormat: "2006-01-02 15:04:05",
 		ForceColors:     true,
 		FullTimestamp:   true,
 	})
-	logrus.SetOutput(os.Stdout)
-	global.SLog = logrus
+	global.SLog.SetOutput(os.Stdout)
 }
 
 func init() {
 	// 初始化业务日志
-	logFilePath := "log/"
-	logFileName := "app.log"
-	fileName := path.Join(logFilePath, logFileName)
-	_ = os.Mkdir(logFilePath, 0755)
-	global.LogFile, _ = os.OpenFile(fileName, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0755)
-	logrus := log.New()
-	logrus.Out = global.LogFile
-	logrus.SetLevel(log.TraceLevel)
-	logrus.SetReportCaller(false)
-	appWriter, _ = rotatelogs.New(
-		logFilePath+"app_%Y%m%d.log",
-		rotatelogs.WithLinkName(fileName),
-		rotatelogs.WithMaxAge(7*24*time.Hour),
-		rotatelogs.WithRotationTime(24*time.Hour),
-	)
-	appLogrus = logrus
+	appLogger = log.New()
+	appLogger.SetLevel(log.TraceLevel)
+	appLogger.SetReportCaller(false)
+	appLogger.SetOutput(&lumberjack.Logger{
+		Filename:   "./log/app.log",
+		MaxSize:    500, // megabytes
+		MaxBackups: 1,
+		MaxAge:     30,   // days
+		Compress:   true, // disabled by default
+	})
 }
 
 func isProd() bool {
@@ -136,21 +117,28 @@ func New() fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		reqId := c.Locals(requestid.ConfigDefault.ContextKey)
 		if isProd() {
-			appLogrus.SetFormatter(&log.JSONFormatter{
+			// 生产环境为了高性能，终端不输出日志
+			appLogger.SetFormatter(&log.JSONFormatter{
 				TimestampFormat:  "2006-01-02 15:04:05",
 				PrettyPrint:      false,
 				DisableTimestamp: false,
 			})
-			appLogrus.SetOutput(appWriter)
 		} else {
-			appLogrus.SetFormatter(&log.TextFormatter{
+			// 非线上环境无所谓，慢点就慢点吧
+			appLogger.SetFormatter(&log.TextFormatter{
 				TimestampFormat: "2006-01-02 15:04:05",
 				ForceColors:     true,
 				FullTimestamp:   true,
 			})
-			appLogrus.SetOutput(io.MultiWriter(os.Stdout, appWriter))
+			appLogger.SetOutput(io.MultiWriter(os.Stdout, &lumberjack.Logger{
+				Filename:   "./log/app.log",
+				MaxSize:    500, // megabytes
+				MaxBackups: 1,
+				MaxAge:     30,   // days
+				Compress:   true, // disabled by default
+			}))
 		}
-		global.BLog = appLogrus.WithFields(log.Fields{
+		global.BLog = appLogger.WithFields(log.Fields{
 			"requestId": reqId,
 			"ip":        c.IP(),
 		})
