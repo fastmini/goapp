@@ -31,13 +31,13 @@ func defaultPool() *redis.Pool {
 				redis.DialPassword(config.Config("REDIS_PASSWORD")),
 			)
 			if err != nil {
-				global.SLog.Errorf("redis conn err %v", err)
-				fmt.Println("redis conn err", err)
+				global.SLog.Errorf("连接redis失败, ERR: %v", err)
 			}
+			global.SLog.Infof("连接redis成功, 地址: %v, DB: %v", config.Config("REDIS_HOST"), config.Config("REDIS_DB"))
 			return conn, err
 		},
-		MaxIdle:     50,
-		MaxActive:   10000,
+		MaxIdle:     10,
+		MaxActive:   1000,
 		IdleTimeout: 60 * time.Second,
 	}
 }

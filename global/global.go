@@ -17,7 +17,7 @@ var DB *gorm.DB
 // SLog 系统日志
 var SLog *log.Logger
 
-// BLog 业务上下文日志
+// BLog 系统日志
 var BLog *log.Entry
 
 // LogFile 日志文件

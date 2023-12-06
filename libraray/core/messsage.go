@@ -1,9 +1,12 @@
 package core
 
 import (
-	log "github.com/sirupsen/logrus"
+	"fiber/global"
 )
 
+func Tips() {
+}
+
 func StartupMessage(addr string) {
-	log.Infof("HTTP Server is listen on 0.0.0.0%v", addr)
+	global.SLog.Infof("HTTP Server listening at 0.0.0.0%v", addr)
 }

@@ -25,6 +25,7 @@ import (
 
 func main() {
 	defer global.CloseGlobal()
+	core.Tips()
 	// 配置文件加载
 	if err := godotenv.Load(".env"); err != nil {
 		panic("Error loading .env file")

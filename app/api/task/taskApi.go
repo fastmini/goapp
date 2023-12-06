@@ -1,4 +1,4 @@
-package taskApi
+package task
 
 import (
 	"context"

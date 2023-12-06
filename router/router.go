@@ -6,7 +6,8 @@
 package router
 
 import (
-	taskApi "fiber/app/api"
+	taskApi "fiber/app/api/task"
+	userApi "fiber/app/api/user"
 	businessError "fiber/error"
 	"fiber/global"
 	"fiber/middleware"
@@ -19,7 +20,6 @@ import (
 func AppRouter(app *fiber.App) {
 	app.Get("/metrics", monitor.New(monitor.Config{Title: "GoApp Monitor", Refresh: 2 * time.Second}))
 	app.Get("/_startup", func(ctx *fiber.Ctx) error {
-		global.BLog.Infof("hello")
 		global.SLog.Infof("hello")
 		return ctx.JSON(resultVo.Success("ok", ctx), fiber.MIMEApplicationJSONCharsetUTF8)
 	})
@@ -27,6 +27,7 @@ func AppRouter(app *fiber.App) {
 		return ctx.JSON(resultVo.Success("success", ctx), fiber.MIMEApplicationJSONCharsetUTF8)
 	})
 	app.Post("/task/testCheck", taskApi.TestCheck)
+	app.Get("/user/count", userApi.GetUser)
 	// 需要登录鉴权的路由
 	apiRoute := app.Group("", middleware.AuthMiddleware())
 	apiRoute.Get("/userInfo", func(ctx *fiber.Ctx) error {
